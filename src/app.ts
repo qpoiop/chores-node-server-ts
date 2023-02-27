@@ -1,4 +1,4 @@
-import express from "express"
+import express, { NextFunction, Request, Response } from "express"
 import helmet from "helmet"
 import cors from "cors"
 import rateLimit from "express-rate-limit"
@@ -13,8 +13,9 @@ import passport from "~/core/passport"
 import { stream } from "~/core/winston"
 
 import { SECRET_KEY, RATE_LIMIT } from "./env"
+import { ResponseFormat } from "./config/httpDefinitions"
 
-const app = express()
+const app: express.Application = express()
 // expressWs(app)
 
 app.use(helmet())
@@ -36,6 +37,8 @@ app.use(passport.initialize())
 app.use(passport.session())
 app.use(lusca.xframe("SAMEORIGIN"))
 app.use(lusca.xssProtection(true))
+
+app.use()
 
 app.use("/", routes)
 

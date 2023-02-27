@@ -2,6 +2,9 @@
     "name": "em-chores-node",
     "version": "0.9.0",
     "private": true,
+    "workspaces": [
+        "packages/*"
+    ],
     "scripts": {
         "start:dev": "cross-env NODE_ENV=development nodemon",
         "start:pm2": "pm2 start processes.js --no-autorestart",

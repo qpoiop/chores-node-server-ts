@@ -6,10 +6,6 @@
         // "tsBuildInfoFile": "./node_modules/.cache/.tsbuildinfo"
     },
     "include": ["*src/**/*"],
-    "exclude": ["**/node_modules", "**/dist", "**/*.meas.ts", "**/*.spec.ts"]
-    // "references": [
-    //     {
-    //         "path": "src"
-    //     }
-    // ]
+    "exclude": ["**/node_modules", "**/dist", "**/*.meas.ts", "**/*.spec.ts"],
+    "references": []
 }

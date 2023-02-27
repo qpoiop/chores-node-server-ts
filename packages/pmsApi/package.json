@@ -1,0 +1,10 @@
+{
+    "name": "pms_api",
+    "version": "0.0.1",
+    "private": true,
+    "scripts": {
+        "start:dev": "cross-env NODE_ENV=development nodemon"
+    },
+    "dependencies": {},
+    "devDependencies": {}
+}
