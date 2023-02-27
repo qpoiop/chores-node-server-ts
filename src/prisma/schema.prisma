@@ -1,0 +1,173 @@
+generator client {
+    provider        = "prisma-client-js"
+    previewFeatures = []
+}
+
+datasource db {
+    provider = "mysql"
+    url      = env("DATABASE_URL")
+}
+
+model pms_authority {
+    ma_idx     BigInt     @id @default(autoincrement()) @db.UnsignedBigInt
+    ug_idx     Int        @db.UnsignedInt
+    m_idx      Int        @db.UnsignedInt
+    pms_ugroup pms_ugroup @relation(fields: [ug_idx], references: [ug_idx], onDelete: Cascade, map: "fk-menu-ugroup-1")
+    pms_menu   pms_menu   @relation(fields: [m_idx], references: [m_idx], onUpdate: Restrict, map: "fk_menu_authority_menu1")
+
+    @@unique([ug_idx, m_idx], map: "ux_menu_authority_1")
+    @@index([m_idx], map: "fk_menu_authority_menu1_idx")
+}
+
+model pms_menu {
+    m_idx         Int              @id @default(autoincrement()) @db.UnsignedInt
+    mm_idx        Int              @db.UnsignedInt
+    m_id          String           @unique(map: "m_id_UNIQUE") @db.VarChar(45)
+    m_name        String           @db.VarChar(60)
+    m_order       Int              @default(99)
+    m_desc        String?          @db.VarChar(255)
+    m_delyn       pms_menu_m_delyn @default(N)
+    m_url         String           @db.VarChar(255)
+    m_popyn       pms_menu_m_popyn @default(N)
+    pms_authority pms_authority[]
+    pms_menugroup pms_menugroup    @relation(fields: [mm_idx], references: [mm_idx], onDelete: Cascade, map: "fk-menu_m-menu-1")
+
+    @@index([mm_idx], map: "menu3_FK1_idx")
+}
+
+model pms_menugroup {
+    mm_idx   Int                    @id @default(autoincrement()) @db.UnsignedInt
+    mm_id    String                 @unique(map: "mm_id_UNIQUE") @db.VarChar(45)
+    mm_name  String                 @db.VarChar(60)
+    mm_order Int                    @default(99)
+    mm_desc  String?                @db.VarChar(255)
+    mm_delyn pms_menugroup_mm_delyn @default(N)
+    mm_url   String                 @db.VarChar(45)
+    mm_topyn pms_menugroup_mm_topyn @default(N)
+    pms_menu pms_menu[]
+}
+
+model pms_player {
+    pr_idx           Int     @id @default(autoincrement())
+    t_idx            Int
+    cs_type          String  @db.VarChar(10)
+    pr_url           String? @db.VarChar(255)
+    pr_key           String? @db.VarChar(255)
+    pr_exdt          String? @default("0") @db.VarChar(255)
+    pr_drmlicenceurl String? @db.VarChar(255)
+    pr_drmurl        String? @db.VarChar(255)
+    pr_waterurl      String? @db.VarChar(255)
+    pr_drmkey        String? @db.VarChar(255)
+    pr_solt          String? @db.VarChar(45)
+}
+
+model pms_team {
+    t_idx          Int              @id @default(autoincrement())
+    t_name         String           @db.VarChar(45)
+    t_id           String?          @default("NULL") @db.VarChar(16)
+    t_delYn        pms_team_t_delYn @default(N)
+    access_id      String?          @db.VarChar(255)
+    access_key     String?          @db.VarChar(255)
+    pms_team_group pms_team_group[]
+}
+
+model pms_team_group {
+    cg_idx     BigInt     @id @default(autoincrement()) @db.UnsignedBigInt
+    ug_idx     Int        @db.UnsignedInt
+    t_idx      Int
+    pms_team   pms_team   @relation(fields: [t_idx], references: [t_idx], onUpdate: Restrict, map: "fk_team_has_group_team1")
+    pms_ugroup pms_ugroup @relation(fields: [ug_idx], references: [ug_idx], onUpdate: Restrict, map: "fk_team_has_group_ugroup1")
+
+    @@unique([ug_idx, t_idx], map: "ux_customer_has_group_1")
+    @@index([t_idx], map: "fk_customer_has_group_customer1_idx")
+}
+
+model pms_ugroup {
+    ug_idx           Int                 @id @default(autoincrement()) @db.UnsignedInt
+    ug_id            String              @unique(map: "ug_id_UNIQUE") @db.VarChar(45)
+    ug_name          String              @db.VarChar(45)
+    ug_delyn         pms_ugroup_ug_delyn @default(N)
+    ug_instm         DateTime            @default(now()) @db.DateTime(0)
+    pms_authority    pms_authority[]
+    pms_team_group   pms_team_group[]
+    pms_users_ugroup pms_users_ugroup[]
+}
+
+model pms_userhistory {
+    eh_idx    BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+    e_idx     Int       @db.UnsignedInt
+    eh_instm  DateTime  @default(now()) @db.DateTime(0)
+    e_acttype String    @db.VarChar(2)
+    e_acttxt  String    @db.Text
+    e_ip      String    @db.VarChar(45)
+    pms_users pms_users @relation(fields: [e_idx], references: [e_idx], onDelete: Cascade, map: "fk-employee_history-1")
+
+    @@index([e_idx], map: "fk-employee_history-1")
+}
+
+model pms_users {
+    e_idx            Int                @id @default(autoincrement()) @db.UnsignedInt
+    e_systemid       String             @unique(map: "e_systemid_UNIQUE") @db.VarChar(16)
+    e_id             String             @unique(map: "e_id_UNIQUE") @db.VarChar(45)
+    e_pw             String             @db.VarChar(255)
+    e_name           String             @db.VarChar(16)
+    e_email          String             @unique(map: "e_email_UNIQUE") @db.VarChar(255)
+    e_department     String?            @db.VarChar(45)
+    e_instm          DateTime           @default(now()) @db.DateTime(0)
+    e_actyn          pms_users_e_actyn  @default(N)
+    e_delyn          pms_users_e_delyn  @default(N)
+    t_idx            Int?
+    pms_userhistory  pms_userhistory[]
+    pms_users_ugroup pms_users_ugroup[]
+}
+
+model pms_users_ugroup {
+    eg_idx     BigInt     @id @default(autoincrement()) @db.UnsignedBigInt
+    e_idx      Int        @db.UnsignedInt
+    ug_idx     Int        @db.UnsignedInt
+    pms_users  pms_users  @relation(fields: [e_idx], references: [e_idx], onDelete: Cascade, map: "fk-employee-ugroup-1")
+    pms_ugroup pms_ugroup @relation(fields: [ug_idx], references: [ug_idx], onDelete: Cascade, map: "fk-employee-ugroup-2")
+
+    @@unique([e_idx, ug_idx], map: "ux_user_has_ugroup_1")
+    @@index([ug_idx], map: "fk-employee-ugroup-2_idx")
+}
+
+enum pms_team_t_delYn {
+    Y
+    N
+}
+
+enum pms_ugroup_ug_delyn {
+    Y
+    N
+}
+
+enum pms_menugroup_mm_delyn {
+    Y
+    N
+}
+
+enum pms_menu_m_delyn {
+    Y
+    N
+}
+
+enum pms_menugroup_mm_topyn {
+    Y
+    N
+}
+
+enum pms_menu_m_popyn {
+    Y
+    N
+}
+
+enum pms_users_e_actyn {
+    Y
+    N
+}
+
+enum pms_users_e_delyn {
+    Y
+    N
+}
