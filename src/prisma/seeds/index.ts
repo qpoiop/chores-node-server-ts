@@ -1,3 +1,7 @@
-import userSeed from "./user"
+import userSeed from "./pms_users"
 
-userSeed()
+const seeds = (() => {
+    userSeed()
+})()
+
+export default seeds

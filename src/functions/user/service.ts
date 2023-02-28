@@ -9,14 +9,6 @@ export default {
             where: {
                 e_id: id,
             },
-            // select: {
-            //     id: true,
-            //     email: true,
-            //     password: true,
-            //     name: true,
-            //     createdAt: true,
-            //     updatedAt: true,
-            // },
         })) as User
 
         return user

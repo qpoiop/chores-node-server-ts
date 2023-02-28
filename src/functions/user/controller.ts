@@ -30,7 +30,8 @@ const controller = (() => {
      */
     router.get("/:id", async (req: Request, res: Response<ResponseFormat>, next: NextFunction) => {
         try {
-            const user: User = await service.findUserById()
+            const { e_id } = req.body
+            const user: User = await service.findUserById(e_id)
             res.status(200).json({
                 ...ResponseStatus.OK,
                 data: {
