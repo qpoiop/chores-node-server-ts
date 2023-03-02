@@ -12,15 +12,14 @@
         "skipLibCheck": true,
         "resolveJsonModule": true,
         "moduleResolution": "node",
-        "forceConsistentCasingInFileNames": true,
-        "rootDir": "src",
-        "baseUrl": "./src/",
-        "outDir": "./dist",
-        "typeRoots": ["./node_modules/@types", "./src/@types"],
+        "allowSyntheticDefaultImports": true,
+        "strictNullChecks": true,
+        "baseUrl": "./",
+        "outDir": "dist",
+        "typeRoots": ["./src/@types", "./node_modules/@types"],
         "module": "commonjs",
         "paths": {
-            "~/*": ["./*"],
-            "@types/*": ["./@types/*"]
+            "~/*": ["./src/*"]
         }
     }
 }

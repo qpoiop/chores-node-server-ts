@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client"
-import crypto from "crypto"
+import bcrypt from "bcrypt"
 
 const prisma = new PrismaClient()
 
@@ -10,7 +10,8 @@ const main = async () => {
         create: {
             e_id: "qpoiop",
             e_systemid: "UniqueSystemId",
-            e_pw: crypto.createHash("sha256").update("1234").digest("hex"),
+            // crypto.createHash("sha256").update("1234").digest("hex"),
+            e_pw: await bcrypt.hash("1234", 10),
             e_name: "안주찬",
             e_email: "qpoiop3@embracelabs.com",
         },

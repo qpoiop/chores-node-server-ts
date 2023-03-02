@@ -1,8 +1,8 @@
 import { Router } from "express"
 
 import helloWorld from "~/functions/hello-world"
-import authentication from "~/functions/auth"
-import user from "~/functions/user"
+import user from "~/controller/user.controller"
+import auth from "~/controller/auth.controller"
 
 const router = Router()
 
@@ -11,7 +11,7 @@ router.get("/", (req, res, next) => {
 })
 
 router.use("/hello-world", helloWorld)
-router.use("/auth", authentication)
 router.use("/user", user)
+router.use("/auth", auth)
 
 export default router

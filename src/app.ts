@@ -1,4 +1,4 @@
-import express, { NextFunction, Request, Response } from "express"
+import express from "express"
 import helmet from "helmet"
 import cors from "cors"
 import rateLimit from "express-rate-limit"
@@ -28,8 +28,12 @@ app.use(express.urlencoded({ extended: true }))
 app.use(
     session({
         secret: SECRET_KEY,
-        cookie: { maxAge: 1000 * 60 * 60 * 24 * 7 * 2 },
-        resave: true,
+        cookie: {
+            httpOnly: false,
+            secure: false,
+            maxAge: 1000 * 60 * 60 * 24 * 7 * 2,
+        },
+        resave: false,
         saveUninitialized: true,
     })
 )
@@ -37,8 +41,6 @@ app.use(passport.initialize())
 app.use(passport.session())
 app.use(lusca.xframe("SAMEORIGIN"))
 app.use(lusca.xssProtection(true))
-
-app.use()
 
 app.use("/", routes)
 
