@@ -1,11 +1,11 @@
 import { User } from "~/model/user.model"
 import prisma from "~/prisma/prisma-client"
-import bcrypt from "bcrypt"
+import { compare } from "bcrypt"
 import HttpException from "~/model/exception.model"
 import { HttpCode } from "~/config/httpDefinitions"
-import { genBcryptHash } from "~/config/utils"
 
 export default {
+    // TODO : change to passport
     signin: async (payload: { e_id: string; e_pw: string }) => {
         console.log("arguements", payload)
         const user = (await prisma.pms_users.findUnique({
@@ -15,7 +15,7 @@ export default {
         })) as User
 
         if (user) {
-            const isMatch = await bcrypt.compare(payload.e_pw, user.e_pw)
+            const isMatch = await compare(payload.e_pw, user.e_pw)
 
             if (isMatch) {
                 return user

@@ -2,13 +2,13 @@ import { NextFunction, Request, Response, Router } from "express"
 import { ResponseFormat, ResponseStatus } from "~/config/httpDefinitions"
 import { User } from "~/model/user.model"
 import userService from "~/service/user.service"
-import authService from "~/service/auth.service"
-import passport from "~/core/passport"
+import passport from "passport"
 import { genJwtToken } from "~/config/utils"
 
 // @controller(auth)
 const controller = (() => {
     const router = Router()
+
     /**
      * @name signup - 회원가입
      * @return {Object<{ data: User, message: string }>}
@@ -45,20 +45,23 @@ const controller = (() => {
      */
     router.post("/signin", async (req: Request, res: Response<ResponseFormat>, next: NextFunction): Promise<void> => {
         // TODO: add auth login
-        passport.authenticate("jwt", { session: false }, async (error: Error) => {
+        passport.authenticate("local", (error: Error, user: User, format: ResponseFormat) => {
             try {
-                const { e_id, e_pw } = req.body
-                const user = await authService.signin({ e_id, e_pw })
+                // const { e_id, e_pw } = req.body
+                // const user = await authService.signin({ e_id, e_pw })
 
-                if (error) {
-                    res.status(200).json({
+                if (error && error instanceof Error) {
+                    return res.status(500).json({
                         ...ResponseStatus.SERVERERROR,
+                        detailMessage: error.message,
                     })
-                    return
+                }
+                if (!user) {
+                    return res.status(200).json(format)
                 }
 
                 const payload = {
-                    e_id,
+                    e_id: user.e_id,
                     e_systemid: user.e_systemid,
                     expires: Date.now() + 3 * 60 * 60 * 1000,
                 }
@@ -86,6 +89,7 @@ const controller = (() => {
      * @return {Object<{ data: User, message: string }>}
      */
     router.delete("/logout", (req: Request, res: Response<ResponseFormat>): void => {
+        // TODO: JWT 세션 초기화
         req.session.destroy(err => {})
         req.logout(err => {
             res.status(200).json({
@@ -97,35 +101,24 @@ const controller = (() => {
     /** token 토큰 체크 미들웨어
      * @return {Object<{ data: User, message: string }>}
      */
-    router.post("/token-check", (req: Request, res: Response<ResponseFormat>): void => {
-        passport.authenticate("jwt", (error: Error, user: User, info: { name: string; message: string }) => {
-            console.log(error, user, info)
+    router.post("/token-check", (req: Request, res: Response<ResponseFormat>, next: NextFunction): void => {
+        passport.authenticate("jwt", (error: Error, user: User, format: ResponseFormat) => {
+            console.log("error: ", error)
+            console.log("user:", user)
+
             if (error && error instanceof Error) {
-                if (error.message === "NOTEXISTDATA") {
-                    res.status(200).json({
-                        ...ResponseStatus.NOTFOUND,
-                        detailMessage: info.message,
-                    })
-                    return
-                } else {
-                    res.status(500).json({
-                        ...ResponseStatus.SERVERERROR,
-                    })
-                    return
-                }
+                return res.status(500).json({
+                    ...ResponseStatus.SERVERERROR,
+                    detailMessage: error.message,
+                })
             }
-            if (user) {
-                req.context = { ...req.context, user }
+            if (!user) {
+                return res.status(200).json(format)
             }
 
-            res.status(200).json({
-                ...ResponseStatus.OK,
-                data: {
-                    user,
-                },
-            })
-            // TODO: change to middleware for auth route
-            // next()
+            req.context = { ...req.context, user }
+
+            next()
         })(req, res)
     })
 

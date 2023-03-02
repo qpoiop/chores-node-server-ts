@@ -1,7 +1,6 @@
 import * as http from "http"
 import { Send } from "@types/express-serve-static-core"
 import { ResponseFormat } from "~/config/httpDefinitions"
-import { PassportStatic } from "passport"
 import { User } from "~/model/user.model"
 
 declare module "express-serve-static-core" {
