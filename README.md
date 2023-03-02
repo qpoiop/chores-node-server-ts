@@ -1,3 +1,11 @@
+### TODO
+
+-   모든 에러 포맷 json으로 변경
+-   JWT token 강제 만료 (logout)
+-   DB connection 설정 테스트
+-   트래픽 부하 테스트
+-   요청 별 로깅 (middleware)
+
 ### SYSTEMID 생성 규칙
 
 -   16자리 랜덤코드 유니크,
