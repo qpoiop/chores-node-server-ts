@@ -15,6 +15,7 @@ import { stream } from "~/core/winston"
 import { SECRET_KEY, RATE_LIMIT } from "./env"
 import { ResponseFormat } from "./config/httpDefinitions"
 import passportConfig from "./passport"
+import ErrorMiddleware from "./middleware/error.middleware"
 
 const app: express.Application = express()
 // expressWs(app)
@@ -41,6 +42,9 @@ app.use(
 app.use(passport.initialize())
 app.use(passport.session())
 passportConfig(passport)
+
+//에러 케이스 핸들링
+app.use(ErrorMiddleware)
 
 app.use(lusca.xframe("SAMEORIGIN"))
 app.use(lusca.xssProtection(true))

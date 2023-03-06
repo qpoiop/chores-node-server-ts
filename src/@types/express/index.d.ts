@@ -7,7 +7,7 @@ declare module "express-serve-static-core" {
     namespace Express {
         type SessionExpress = import("express-session").Session
         export interface Request extends http.IncomingMessage, Express.Request, Passport.Request {
-            session: SessionExpress
+            session: import("express-session").Session & { [key: string]: any }
             isAuthenticated(): boolean
             isUnauthenticated(): boolean
             login(user: User, done: (err: any) => void): void
