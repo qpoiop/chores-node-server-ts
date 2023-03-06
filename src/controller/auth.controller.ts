@@ -89,37 +89,14 @@ const controller = (() => {
      * @return {Object<{ data: User, message: string }>}
      */
     router.delete("/logout", (req: Request, res: Response<ResponseFormat>): void => {
+        passport.authenticate("jwt", (error: Error, user: User, format: ResponseFormat) => {})
         // TODO: JWT 세션 초기화
-        req.session.destroy(err => {})
-        req.logout(err => {
+        req.session.destroy(err => {
+            // res.clearCookie("session")
             res.status(200).json({
                 ...ResponseStatus.OK,
             })
         })
-    })
-
-    /** token 토큰 체크 미들웨어
-     * @return {Object<{ data: User, message: string }>}
-     */
-    router.post("/token-check", (req: Request, res: Response<ResponseFormat>, next: NextFunction): void => {
-        passport.authenticate("jwt", (error: Error, user: User, format: ResponseFormat) => {
-            console.log("error: ", error)
-            console.log("user:", user)
-
-            if (error && error instanceof Error) {
-                return res.status(500).json({
-                    ...ResponseStatus.SERVERERROR,
-                    detailMessage: error.message,
-                })
-            }
-            if (!user) {
-                return res.status(200).json(format)
-            }
-
-            req.context = { ...req.context, user }
-
-            next()
-        })(req, res)
     })
 
     return router

@@ -1,4 +1,5 @@
 import winston from "winston"
+import prisma from "~/prisma/prisma-client"
 
 const logger = winston.createLogger({
     format: winston.format.simple(),
@@ -18,8 +19,17 @@ const logger = winston.createLogger({
     exitOnError: false,
 })
 
+if (prisma !== undefined) {
+    prisma.$on("query", e => {
+        logger.info(`[Excute]: ${e.timestamp}, [Duration]: ${e.duration}ms`)
+        logger.info(`[Params]: ${JSON.stringify(e.params)}, [Query]: ${e.query}`)
+    })
+}
+
 export const stream = {
     write: message => {
         logger.info(message)
     },
 }
+
+export default logger

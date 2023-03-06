@@ -25,17 +25,23 @@ export default (passport: PassportStatic): void => {
                 // jwtFromRequest: ExtractJwt.fromHeader('Authorization'),
                 jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
                 secretOrKey: SECRET_KEY,
+                // ignoreExpiration: true,
             },
             async (payload: any | undefined, done: VerifiedCallback) => {
                 try {
-                    // 유효하지 않은 토큰인 케이스
-                    if (Date.now() > payload.expires) return done(null, false, ResponseStatus.UNAUTHORIZED)
+                    const expirationDate = new Date(payload.expires)
+                    const currentDate = new Date()
+
+                    // 토큰의 유효기간이 만료된 경우
+                    if (currentDate > expirationDate) {
+                        return done(null, false)
+                    }
 
                     const { e_id } = payload as User
                     const user = await userService.findUserById(e_id)
 
                     // 존재하지 않는 유저 정보를 가지고 있는 케이스
-                    if (!user) return done(null, false, ResponseStatus.NOTFOUND)
+                    if (!user) return done(null, false)
 
                     // 인증 성공
                     return done(null, user)

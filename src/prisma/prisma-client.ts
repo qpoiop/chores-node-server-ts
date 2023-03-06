@@ -1,18 +1,31 @@
+import { Prisma, PrismaClient } from "@prisma/client"
+
+type PrismaOptionType = PrismaClient<Prisma.PrismaClientOptions, "query">
 declare global {
-    var prisma: PrismaClient | undefined
+    var prisma: PrismaOptionType | undefined
 }
 
-import { PrismaClient } from "@prisma/client"
-
-let prisma: PrismaClient
+let prisma: PrismaOptionType
 
 if (process.env.NODE_ENV === "production") {
-    prisma = new PrismaClient()
+    prisma = new PrismaClient({
+        log: [
+            {
+                emit: "event",
+                level: "query",
+            },
+        ],
+    })
 } else {
     // 개발 환경에서 prisma client 중복 선언 방지
     if (!global.prisma) {
         global.prisma = new PrismaClient({
-            log: ["query"],
+            log: [
+                {
+                    emit: "stdout",
+                    level: "query",
+                },
+            ],
         })
     }
     prisma = global.prisma

@@ -13,7 +13,6 @@ import passport from "passport"
 import { stream } from "~/core/winston"
 
 import { SECRET_KEY, RATE_LIMIT } from "./env"
-import { ResponseFormat } from "./config/httpDefinitions"
 import passportConfig from "./passport"
 import ErrorMiddleware from "./middleware/error.middleware"
 
