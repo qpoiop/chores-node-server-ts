@@ -5,7 +5,6 @@ import rateLimit from "express-rate-limit"
 import compression from "compression"
 import morgan from "morgan"
 import session from "express-session"
-// import expressWs from "express-ws"
 import lusca from "lusca"
 
 import routes from "~/core/routes"
@@ -17,15 +16,15 @@ import passportConfig from "./passport"
 import ErrorMiddleware from "./middleware/error.middleware"
 
 const app: express.Application = express()
-// expressWs(app)
 
 app.use(helmet())
 app.use(cors({ credentials: true }))
-app.use(rateLimit({ max: Number(RATE_LIMIT), windowMs: 15 * 60 * 1000 }))
+app.use(rateLimit({ max: Number(RATE_LIMIT), windowMs: 15 * 60 * 1000 })) // 루트 디렉터리에서 정의된 RATE_LIMIT 변수 사용
 app.use(compression())
 app.use(morgan("combined", { stream }))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
+
 app.use(
     session({
         secret: SECRET_KEY,
@@ -42,7 +41,7 @@ app.use(passport.initialize())
 app.use(passport.session())
 passportConfig(passport)
 
-//에러 케이스 핸들링
+// 에러 케이스 핸들링
 app.use(ErrorMiddleware)
 
 app.use(lusca.xframe("SAMEORIGIN"))
