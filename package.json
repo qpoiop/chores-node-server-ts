@@ -2,9 +2,6 @@
     "name": "em-chores-node",
     "version": "0.9.0",
     "private": true,
-    "workspaces": [
-        "packages/*"
-    ],
     "scripts": {
         "start:dev": "cross-env NODE_ENV=development nodemon",
         "start:pm2": "pm2 start processes.js --no-autorestart",
@@ -18,8 +15,7 @@
         "migrate": "prisma migrate dev --preview-feature --schema=./src/prisma/schema.prisma",
         "test:jest": "jest --coverage",
         "e2e:setup": "cd e2e && yarn install",
-        "e2e:start": "cd e2e && yarn test",
-        "e2e:meas": "cd e2e && yarn perf"
+        "e2e:start": "cd e2e && yarn test"
     },
     "dependencies": {
         "@prisma/client": "^4.10.1",
